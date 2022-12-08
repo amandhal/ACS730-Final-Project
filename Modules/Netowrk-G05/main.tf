@@ -21,8 +21,9 @@ locals {
   name_prefix  = "${local.prefix}-${var.env}"
 }
 
+#creating globalvars
 module "globalvars" {
-  source = "/home/ec2-user/environment/FinalProject_Group5/Modules/globalvars"
+  source = "../globalvars"
 }
 
 
@@ -120,25 +121,3 @@ resource "aws_route_table_association" "public_route_table_association" {
   subnet_id      = aws_subnet.public_subnet[count.index].id
 }
 
-# Route table to route add default gateway pointing to Internet Gateway (IGW)
-resource "aws_route_table" "private_route_table" {
-  vpc_id = aws_vpc.mainG5Vpc.id
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.nat_gw.id
-  }
-   tags = merge(
-    local.default_tags, {
-      Name = "${local.name_prefix}-private_route_table"
-    }
-  )
-}
-
-
-
-# Associate subnets with the  Private route table
-resource "aws_route_table_association" "private_route_table_association" {
-  count          = length(aws_subnet.private_subnet[*].id)
-  route_table_id = aws_route_table.private_route_table.id
-  subnet_id      = aws_subnet.private_subnet[count.index].id
-}
