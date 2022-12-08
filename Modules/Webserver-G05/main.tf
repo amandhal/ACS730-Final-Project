@@ -105,3 +105,136 @@ resource "aws_instance" "Bastion_Server" {
   )
 }
 
+
+
+# Security Group For Web_Servers  
+resource "aws_security_group" "SG_WebServer" {
+  name        = "Allow_SSH_HTTP_NONPROD_SERVERS"
+  description = "Allow HTTP and SSH inbound traffic"
+  vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
+
+  ingress {
+    description      = "HTTP from everywhere"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+
+    ipv6_cidr_blocks = ["::/0"]
+  }
+  
+  # addition of HTTPS
+    ingress {
+    description      = "HTTPS from everywhere"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    description      = "SSH from everywhere"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    #security_groups  = [aws_security_group.SG_Bastion.id]  ## change need to revert 
+    
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = merge(local.default_tags,
+    {
+      "Name" = "${local.name_prefix}-SG_WebServer-sg"
+    }
+  )
+}
+
+
+
+# Creating application load balancer
+resource "aws_lb" "LoadBalancerApp" {
+  name               = "LoadBalancerApp-${var.env}"
+  internal           = false
+  load_balancer_type = "application"
+  #security_groups    = [aws_security_group.SG_LoadBlancer.id]
+  security_groups    = [aws_security_group.SG_WebServer.id]
+  subnets            = data.terraform_remote_state.network.outputs.public_subnet_ids[*]
+  enable_deletion_protection = false
+
+  tags = merge(local.default_tags,
+    {
+      "Name" = "${local.name_prefix}-LoadBalancerApp"
+    }
+  )
+}
+
+# Creating Target Group
+resource "aws_lb_target_group" "targetgroup5" {
+  name     = "targetgroup5-${var.env}"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = data.terraform_remote_state.network.outputs.vpc_id
+  
+  lifecycle { create_before_destroy = true }
+# health check addition 
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 6
+    timeout             = 30
+    interval            = 31
+  }
+  
+  tags = merge(local.default_tags,
+    {
+      "Name" = "${local.name_prefix}-targetgroup"
+    }
+  )
+}
+
+
+# Creating load balance listener
+resource "aws_lb_listener" "LoadBalanceListner"{
+  load_balancer_arn = aws_lb.LoadBalancerApp.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.targetgroup5.arn
+  }
+}
+
+
+resource "aws_launch_configuration" "launch_configuration" {
+  name          = "${local.name_prefix}-launch_configuration"
+  image_id      = "ami-0c02fb55956c7d316"
+  instance_type = var.instance_type
+#security_groups    = [aws_security_group.SG_LoadBlancer.id]  
+ security_groups    = [aws_security_group.SG_WebServer.id] ## Security Group Updated 
+  key_name      = aws_key_pair.linux_key.key_name
+  associate_public_ip_address = true
+  iam_instance_profile = "LabInstanceProfile"
+
+  user_data = templatefile("../../../Modules/Webserver-G05/install_httpd.sh.tpl",
+      {
+   
+      env    = var.env
+    }
+    )
+  lifecycle{
+    create_before_destroy = true
+  }
+
+}
+
