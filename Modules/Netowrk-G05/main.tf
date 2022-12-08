@@ -90,3 +90,33 @@ resource "aws_eip" "nat_eip" {
 depends_on = [aws_internet_gateway.igw]
 }
 
+# Create Internet Gateway
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.mainG5Vpc.id
+
+  tags = merge(local.default_tags,
+    {
+      "Name" = "${local.name_prefix}-igw"
+    }
+  )
+}
+
+# Route table to route add default gateway pointing to Internet Gateway (IGW)
+resource "aws_route_table" "public_route_table" {
+  vpc_id = aws_vpc.mainG5Vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+  tags = {
+    Name = "${local.name_prefix}-public_route_table"
+  }
+}
+
+# Associate subnets with the custom route table
+resource "aws_route_table_association" "public_route_table_association" {
+  count          = length(aws_subnet.public_subnet[*].id)
+  route_table_id = aws_route_table.public_route_table.id
+  subnet_id      = aws_subnet.public_subnet[count.index].id
+}
+
