@@ -238,3 +238,92 @@ resource "aws_launch_configuration" "launch_configuration" {
 
 }
 
+# Auto Scaling Group
+resource "aws_autoscaling_group" "AutoScalingWebserver" {
+  name               = "${local.name_prefix}-AutoScalingWebserver"
+   desired_capacity   = var.desired_capacity
+  max_size           = var.maximum_size
+  min_size           = var.minimum_size
+  launch_configuration = aws_launch_configuration.launch_configuration.name
+  vpc_zone_identifier       = data.terraform_remote_state.network.outputs.private_subnet_ids[*]
+  depends_on = [aws_lb.LoadBalancerApp]
+  target_group_arns = [aws_lb_target_group.targetgroup5.arn]
+  health_check_type = "ELB"
+
+  enabled_metrics = [
+    "GroupMinSize",
+    "GroupMaxSize",
+    "GroupDesiredCapacity",
+    "GroupInServiceInstances",
+    "GroupTotalInstances"
+  ]
+    metrics_granularity = "1Minute"
+    lifecycle {
+    create_before_destroy = true
+  }
+  tag {
+    key                 = "Name"
+    value               = "web"
+    propagate_at_launch = true
+  }
+  
+}
+
+
+#Creating Scaling policy for AutoScaling Groupc combined CPU usage of all the instances reaches or greater  10% 
+resource "aws_autoscaling_policy" "scalingpolicy10percent" {
+  name                   = "${local.name_prefix}-scalingpolicy10percent"
+  autoscaling_group_name = aws_autoscaling_group.AutoScalingWebserver.name
+  adjustment_type        = "ChangeInCapacity"
+  scaling_adjustment     = 1
+  cooldown               = 60
+}
+
+
+#Creating an alarm metric when combined CPU usage of all the instances  less then  or equal 5% 
+resource "aws_cloudwatch_metric_alarm" "metricScalingPolicey5" {
+  alarm_description   = "CPU usage of all the instances  less then  or equal 5% "
+  alarm_actions       = [aws_autoscaling_policy.scalingpolicy5percent.arn]
+  alarm_name          = "${local.name_prefix}_scale_down"
+  comparison_operator = "LessThanOrEqualToThreshold"
+  namespace           = "AWS/EC2"
+  metric_name         = "CPUUtilization"
+  threshold           = "5"
+  evaluation_periods  = "2"
+  period              = "60"
+  statistic           = "Average"
+
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.AutoScalingWebserver.name
+  }
+}
+
+
+#Creating Scaling policy for AutoScaling Groupc combined CPU usage of all the instances  less then  or equal 5% 
+resource "aws_autoscaling_policy" "scalingpolicy5percent" {
+  name                   = "${local.name_prefix}-scalingpolicy5percent"
+  autoscaling_group_name = aws_autoscaling_group.AutoScalingWebserver.name
+  adjustment_type        = "ChangeInCapacity"
+  scaling_adjustment     = -1
+  cooldown               = 60
+}
+
+
+#Creating an alarm metric when combined CPU usage of all the instances  reaches or greater  10% 
+resource "aws_cloudwatch_metric_alarm" "metricScalingPolicey10" {
+  alarm_description   = " CPU usage of all the instances  reaches or greater  10%"
+  alarm_actions       = [aws_autoscaling_policy.scalingpolicy5percent.arn]
+  alarm_name          = "${local.name_prefix}_scale_up"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  namespace           = "AWS/EC2"
+  metric_name         = "CPUUtilization"
+  threshold           = "10"
+  evaluation_periods  = "2"
+  period              = "60"
+  statistic           = "Average"
+
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.AutoScalingWebserver.name
+  }
+}
+
