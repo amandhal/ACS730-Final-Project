@@ -33,3 +33,15 @@ output "nat_gateway_id" {
 output "aws_eip" {
   value = aws_eip.nat_eip.id
 }
+
+# Output variables for Internet Gateway
+output "aws_internet_gateway" {
+  value = aws_internet_gateway.igw.id
+}
+
+# Output variables for Public Route Table
+
+output "public_route_table" {
+  value = aws_route_table.private_route_table.id
+}
+
