@@ -25,3 +25,18 @@ variable "env" {
   type        = string
   description = "Deployment Environment"
 }
+
+# Provision Private subnets in custom VPC
+variable "private_cidr_blocks" {
+
+  type        = list(string)
+  description = "Private Subnet CIDRs"
+}
+
+# Provision public subnets in custom VPC
+variable "public_cidr_blocks" {
+
+  type        = list(string)
+  description = "public Subnet CIDRs"
+  
+}
