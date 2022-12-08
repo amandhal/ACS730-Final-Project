@@ -65,8 +65,8 @@ resource "aws_security_group" "SG_Bastion" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.my_public_ip}/32", "${var.my_private_ip}/32"]
-    
+    #cidr_blocks = ["${var.my_public_ip}/32", "${var.my_private_ip}/32"]
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
