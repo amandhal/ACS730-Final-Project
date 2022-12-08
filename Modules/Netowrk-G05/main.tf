@@ -53,3 +53,40 @@ resource "aws_subnet" "public_subnet" {
     }
   )
 }
+
+# Add provisioning of the private subnetin the default VPC 
+resource "aws_subnet" "private_subnet" {
+  count             = length(var.private_cidr_blocks)
+  vpc_id            = aws_vpc.mainG5Vpc.id
+  cidr_block        = var.private_cidr_blocks[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+  tags = merge(
+    local.default_tags, {
+      Name = "${local.name_prefix}-private-subnet-${count.index}"
+    }
+  )
+}
+
+# Create  NAT Gatway
+resource "aws_nat_gateway" "nat_gw" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.public_subnet[1].id
+# depends_on = [aws_internet_gateway.igw]
+  tags = merge(
+    local.default_tags, {
+      Name = "${local.name_prefix}-nat_gw"
+    }
+  )
+
+
+}
+
+# Create elastic IP for NAT GW
+resource "aws_eip" "nat_eip" {
+  vpc   = true
+  tags = {
+    Name = "${local.name_prefix}-natgw"
+  }
+depends_on = [aws_internet_gateway.igw]
+}
+
