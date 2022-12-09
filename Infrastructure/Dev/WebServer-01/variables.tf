@@ -51,3 +51,17 @@ variable "maximum_size" {
   type        = number
   description = "Maximum group size for auto scaling"
 }
+
+#Public IP of Cloud 9 Environment these values need to hardcoded 
+variable "my_public_ip" {
+  default     = "34.226.222.38"
+  type        = string
+  description = "Public IP of Cloud 9 Environment"
+}
+
+#Private IP of Cloud 9 Environment these values need to hardcoded 
+variable "my_private_ip" {
+  default     = "172.31.45.63"
+  type        = string
+  description = "Private IP of Cloud 9 Environment"
+}
