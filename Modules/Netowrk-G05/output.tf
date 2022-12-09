@@ -48,5 +48,6 @@ output "public_route_table" {
 # Output variables for Private Route
 
 output "private_route_table" {
+
   value = aws_route_table.private_route_table.id
 }

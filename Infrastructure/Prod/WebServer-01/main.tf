@@ -4,7 +4,7 @@ module "globalvars" {
 }
 # module to deploy basic networing for Staging  
 module "prod-webServer" {
-  source            = ".../../../Modules/Webserver-G05"
+  source            = "../../../Modules/Webserver-G05"
   env               = var.env
   instance_type     = var.instance_type
   path_to_linux_key = var.path_to_linux_key

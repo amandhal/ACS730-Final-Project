@@ -101,6 +101,20 @@ resource "aws_internet_gateway" "igw" {
     }
   )
 }
+# Route table to route add default gateway pointing to Internet Gateway (IGW)
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.mainG5Vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.nat_gw.id
+  }
+   tags = merge(
+    local.default_tags, {
+      Name = "${local.name_prefix}-private_route_table"
+    }
+  )
+}
+
 
 # Route table to route add default gateway pointing to Internet Gateway (IGW)
 resource "aws_route_table" "public_route_table" {
