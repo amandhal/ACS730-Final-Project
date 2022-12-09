@@ -78,9 +78,9 @@ group5_acs730_project>>Infrastructure>>stagging>>WebServer-01
 If you do not want to update the images you need to replace the images name in http script with your respective images name in "install_httpd.sh"
 
 
-*********************
-Infrastructure Deployment
-*********************
+**************************************
+Infrastructure and Destruction Proccess
+***************************************
 
 Before deploying we are going to define the Alias of terraform = tf for this you need to follow the below command:
 
@@ -96,7 +96,7 @@ After doing this we don't have type terraform again and again.
 
 In order to deploy the infrastructure succesfully kindly follow the below  execution flow
 
-Step1: Deploying the Dev Enviormnet
+Step1 Part A: Deploying the Dev Enviormnet
 
 a) Network Infrastructure
 	1)Open terminal ../group5_acs730_project/Infrastructure/dev/Network-01
@@ -121,7 +121,29 @@ b) Web-Server Provioning
 		
 		5) tf apply and then type 'yes' or you can tf apply --auto-approve
 		
-Step2: Deploying the Staging Enviormnet
+		
+
+
+Step1 Part B: Destroying the Dev Enviormnet
+a) Web-Server De-Provisioning  
+
+		1)Open terminal ../group5_acs730_project/Infrastructure/dev/WebServer-01
+		
+		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
+		
+
+b) Network Infrastructure
+
+		1)Open terminal ../group5_acs730_project/Infrastructure/dev/Network-01
+		
+		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
+		
+		
+
+		
+		
+		
+Step2 Part A: Deploying the Staging Enviormnet
 
 a) Network Infrastructure
 		
@@ -146,9 +168,29 @@ b) Web-Server Provioning
 		4) tf plan
 		
 		5) tf apply and then type 'yes' or you can tf apply --auto-approve
+
+
+Step2 PART B: Destroying the staging Enviormnet
+
+a) Web-Server De-Provisioning  
+
+		1)Open terminal ../group5_acs730_project/Infrastructure/staging/WebServer-01
+		
+		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
+		
+
+
+b) Network Infrastructure
+
+		1)Open terminal ../group5_acs730_project/Infrastructure/staging/Network-01
+		
+		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
+		
+
+
 		
 		
-Step3: Deploying the prod Enviormnet
+Step3 PART A: Deploying the prod Enviormnet
 
 a) Network Infrastructure
 
@@ -174,59 +216,29 @@ b) Web-Server Provioning
 		
 		5) tf apply and then type 'yes' or you can tf apply --auto-approve
 		
-All Servers form different enviorments have been succesfully deployed
+Step3 Part B: Destroying the prod Enviormnet
 
-*****************************
-Destruction Proccess
-*****************************
-
-
-Step1: Destroying the Dev Enviormnet
-
-a) Network Infrastructure
-
-		1)Open terminal ../group5_acs730_project/Infrastructure/dev/Network-01
 		
-		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
-		
-		
-b) Web-Server De-Provisioning  
-
-		1)Open terminal ../group5_acs730_project/Infrastructure/dev/WebServer-01
-		
-		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
-		
-
-Step2: Destroying the staging Enviormnet
-
-a) Network Infrastructure
-
-		1)Open terminal ../group5_acs730_project/Infrastructure/staging/Network-01
-		
-		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
-		
-b) Web-Server De-Provisioning  
-
-		1)Open terminal ../group5_acs730_project/Infrastructure/staging/WebServer-01
-		
-		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
-		
-
-Step2: Destroying the prod Enviormnet
-
-a) Network Infrastructure
-
-		1)Open terminal ../group5_acs730_project/Infrastructure/prod/Network-01
-		
-		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
-		
-		
-b) Web-Server De-Provisioning 
+a) Web-Server De-Provisioning 
 
 		1)Open terminal ../group5_acs730_project/Infrastructure/prod/WebServer-01
 		
 		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
 		
+	
+	
+b) Network Infrastructure
+
+		1)Open terminal ../group5_acs730_project/Infrastructure/prod/Network-01
+		
+		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
+		
+	
+		
+We are re-deploying each enviorment sepratly becuase of the limitatoion on Student account.
+
+
+
 		
 Kindly contact us we are loved to answer your querries.
 
@@ -236,3 +248,4 @@ asingla7@myseneca.ca
 adhal@myseneca.ca
 
 Team Flowers:)
+ 
