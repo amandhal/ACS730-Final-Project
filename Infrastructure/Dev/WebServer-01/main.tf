@@ -3,7 +3,7 @@ module "globalvars" {
   source = "../../../Modules/globalvars"
 }
 # module to deploy basic networing for Staging  
-module "staging-webServer" {
+module "dev-webServer" {
   source            = "../../../Modules/Webserver-G05"
   env               = var.env
   instance_type     = var.instance_type
