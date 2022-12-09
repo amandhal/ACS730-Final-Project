@@ -60,7 +60,7 @@ Note:
 
 If you are unable to create bucket succesfully if the name is already taken:
 
-you can create 3 buckets with any name you need update  config.tf file Infrastrucure section this is the directory hirechay:
+you can create 3 buckets with any name you need update  "config.tf" file Infrastrucure section this is the directory hirechay:
 
 group5_acs730_project>>Infrastructure>>Prod>>Network-01
 
@@ -88,7 +88,7 @@ sudo vi ~/.bashrc
 	
 	hit insert key or "i"
 	
-	Then type "tf=terraform"
+	Then type "alias tf=terraform"
 	
 	Hit "ESC" key and then type "wq!" and hit enter
 		
@@ -235,4 +235,4 @@ amdungrani@myseneca.ca
 asingla7@myseneca.ca
 adhal@myseneca.ca
 
-Team Flowrs:)
+Team Flowers:)
