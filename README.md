@@ -233,6 +233,6 @@ Kindly contact us we are loved to answer your querries.
 csahmad@myseneca.ca
 amdungrani@myseneca.ca
 asingla7@myseneca.ca
-aadahal@myseneca.ca
+adhal@myseneca.ca
 
 Team Flowrs:)
