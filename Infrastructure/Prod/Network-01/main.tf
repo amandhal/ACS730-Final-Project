@@ -3,9 +3,6 @@ module "globalvars" {
   source = "../../../Modules/globalvars"
 }
 
-
-
-
 # module to deploy basic networing for Staging  
 module "prod-networing" {
   source              = "../../../Modules/Netowrk-G05"

@@ -1,6 +1,6 @@
 /*#Bastion Public IP
 output "bastion_eip" {
-  value = module.staging-webServer.bastion_eip
+  value = module.dev-webServer.bastion_eip
 }
 */
 
