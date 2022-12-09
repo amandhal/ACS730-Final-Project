@@ -4,7 +4,7 @@ module "globalvars" {
 }
 
 # module to deploy basic networing for Staging  
-module "prod-networing" {
+module "prod-networking" {
   source              = "../../../Modules/Netowrk-G05"
   env                 = var.env
   vpc_cidr            = var.vpc_cidr
