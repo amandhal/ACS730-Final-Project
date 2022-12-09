@@ -21,14 +21,14 @@ variable "path_to_linux_key" {
 
 #Desired Capacity 
 variable "desired_capacity" {
-  default     = 3
+  default     = 2
   type        = number
   description = "Optimal Capacity"
 }
 
 #Minimum group size for auto scaling
 variable "minimum_size" {
-  default     = 1
+  default     = 2
   type        = number
   description = "Minimum group size for auto scaling"
 }

@@ -24,7 +24,7 @@ variable "desired_capacity" {
 
 #Minimum group size for auto scaling
 variable "minimum_size" {
-  default     = 1
+  default     = 3
   type        = number
   description = "Minimum group size for auto scaling"
 }
