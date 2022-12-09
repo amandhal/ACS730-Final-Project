@@ -46,7 +46,7 @@ dev-group05-finalproject
 
 staging-group05-finalproject
 
-In the each s3 bucket you need to creat a folder with name of "images" and upload 4 images with name as follows:
+In the each s3 bucket you need to create a folder with name of "images" and upload 4 images with name as follows:
 
 safeer.jpeg
 
@@ -54,7 +54,7 @@ aman.jpeg
 
 akash.jpeg
 
-amih.jpg
+amish.jpg
 
 Note:
 
@@ -190,7 +190,7 @@ a) Network Infrastructure
 		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
 		
 		
-b) Web-Server De-Provioning  
+b) Web-Server De-Provisioning  
 
 		1)Open terminal ../group5_acs730_project/Infrastructure/dev/WebServer-01
 		
@@ -205,7 +205,7 @@ a) Network Infrastructure
 		
 		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
 		
-b) Web-Server De-Provioning  
+b) Web-Server De-Provisioning  
 
 		1)Open terminal ../group5_acs730_project/Infrastructure/staging/WebServer-01
 		
@@ -221,7 +221,7 @@ a) Network Infrastructure
 		2) tf destroy and then type 'yes' or you can tf destroy --auto-approve
 		
 		
-b) Web-Server De-Provioning 
+b) Web-Server De-Provisioning 
 
 		1)Open terminal ../group5_acs730_project/Infrastructure/prod/WebServer-01
 		
