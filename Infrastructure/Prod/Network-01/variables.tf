@@ -27,23 +27,3 @@ variable "public_subnet_cidrs" {
   type        = list(string)
   description = "Public Subnet CIDRs"
 }
-
-/*
-
-# Default tags
-variable "default_tags" {
-  default = {
-    "App"   = "Web-Application-TerraformAutomation"
-    "Project" = "Final-Project-ACS730"
-  }
-  type        = map(any)
-  description = "Default tags to be appliad to all AWS resources"
-}
-
-# Name prefix
-variable "prefix" {
-  type        = string
- value     = "Group-No-5"
-  description = "Name prefix"
-}
-*/
