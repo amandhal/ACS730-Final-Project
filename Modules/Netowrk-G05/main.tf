@@ -72,7 +72,7 @@ resource "aws_subnet" "private_subnet" {
 resource "aws_nat_gateway" "nat_gw" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.public_subnet[1].id
-# depends_on = [aws_internet_gateway.igw]
+
   tags = merge(
     local.default_tags, {
       Name = "${local.name_prefix}-nat_gw"
