@@ -24,7 +24,7 @@ variable "desired_capacity" {
 
 #Minimum group size for auto scaling
 variable "minimum_size" {
-  default     = 1
+  default     = 3
   type        = number
   description = "Minimum group size for auto scaling"
 }
@@ -34,22 +34,6 @@ variable "maximum_size" {
   type        = number
   description = "Maximum group size for auto scaling"
 }
-
-
-#Private IP of Cloud 9 Environment these values need to hardcoded 
-variable "my_private_ip" {
-  default     = "172.31.45.63"
-  type        = string
-  description = "Private IP of Cloud 9 Environment"
-}
-
-#Public IP of Cloud 9 Environment these values need to hardcoded 
-variable "my_public_ip" {
-  default     = "34.226.222.38"
-  type        = string
-  description = "Public IP of Cloud 9 Environment"
-}
-
 
 variable "path_to_linux_key" {
   default     = "/home/ec2-user/.ssh/Group-No-5-staging.pub"

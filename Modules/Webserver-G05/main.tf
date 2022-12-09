@@ -55,7 +55,7 @@ resource "aws_key_pair" "linux_key" {
 
 # Security Group for Bastion 
 resource "aws_security_group" "SG_Bastion" {
-  name        = "Allow_ssh"
+  name        = "Allow_ssh-${var.env}"
   description = "Allow SSH inbound traffic"
   vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
 
@@ -65,7 +65,6 @@ resource "aws_security_group" "SG_Bastion" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    #cidr_blocks = ["${var.my_public_ip}/32", "${var.my_private_ip}/32"]
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
@@ -92,7 +91,7 @@ resource "aws_instance" "Bastion_Server" {
   key_name                    = aws_key_pair.linux_key.key_name
   subnet_id                   = data.terraform_remote_state.network.outputs.public_subnet_ids[0]
   security_groups             = [aws_security_group.SG_Bastion.id]
-  associate_public_ip_address = true  #3 Changed its value yto true after verfi.
+  associate_public_ip_address = true  #3 Changed its value to true after verfied.
 
   lifecycle {
     create_before_destroy = true
@@ -100,7 +99,7 @@ resource "aws_instance" "Bastion_Server" {
 
   tags = merge(local.default_tags,
     {
-      "Name" = "${local.name_prefix}-Bastion_Server"
+      "Name" = "${local.name_prefix}-Bastion_Server-${var.env}"
     }
   )
 }
@@ -109,7 +108,7 @@ resource "aws_instance" "Bastion_Server" {
 
 # Security Group For Web_Servers  
 resource "aws_security_group" "SG_WebServer" {
-  name        = "Allow_SSH_HTTP_NONPROD_SERVERS"
+  name        = "Allow_SSH_HTTP_NONPROD_SERVERS-${var.env}"
   description = "Allow HTTP and SSH inbound traffic"
   vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
 
@@ -140,7 +139,7 @@ resource "aws_security_group" "SG_WebServer" {
     to_port          = 22
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
-    #security_groups  = [aws_security_group.SG_Bastion.id]  ## change need to revert 
+    security_groups  = [aws_security_group.SG_Bastion.id]  ## change need to revert 
     
     ipv6_cidr_blocks = ["::/0"]
   }
@@ -155,7 +154,7 @@ resource "aws_security_group" "SG_WebServer" {
 
   tags = merge(local.default_tags,
     {
-      "Name" = "${local.name_prefix}-SG_WebServer-sg"
+      "Name" = "${local.name_prefix}-SG_WebServer-sg-${var.env}"
     }
   )
 }
@@ -167,7 +166,6 @@ resource "aws_lb" "LoadBalancerApp" {
   name               = "LoadBalancerApp-${var.env}"
   internal           = false
   load_balancer_type = "application"
-  #security_groups    = [aws_security_group.SG_LoadBlancer.id]
   security_groups    = [aws_security_group.SG_WebServer.id]
   subnets            = data.terraform_remote_state.network.outputs.public_subnet_ids[*]
   enable_deletion_protection = false
@@ -197,7 +195,7 @@ resource "aws_lb_target_group" "targetgroup5" {
   
   tags = merge(local.default_tags,
     {
-      "Name" = "${local.name_prefix}-targetgroup"
+      "Name" = "${local.name_prefix}-targetgroup-${var.env}"
     }
   )
 }
@@ -217,11 +215,10 @@ resource "aws_lb_listener" "LoadBalanceListner"{
 
 
 resource "aws_launch_configuration" "launch_configuration" {
-  name          = "${local.name_prefix}-launch_configuration"
+  name          = "${local.name_prefix}-launch_configuration-${var.env}"
   image_id      = "ami-0c02fb55956c7d316"
   instance_type = var.instance_type
-#security_groups    = [aws_security_group.SG_LoadBlancer.id]  
- security_groups    = [aws_security_group.SG_WebServer.id] ## Security Group Updated 
+ security_groups    = [aws_security_group.SG_WebServer.id]
   key_name      = aws_key_pair.linux_key.key_name
   associate_public_ip_address = true
   iam_instance_profile = "LabInstanceProfile"
@@ -240,7 +237,7 @@ resource "aws_launch_configuration" "launch_configuration" {
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "AutoScalingWebserver" {
-  name               = "${local.name_prefix}-AutoScalingWebserver"
+  name               = "${local.name_prefix}-AutoScalingWebserver${var.env}"
    desired_capacity   = var.desired_capacity
   max_size           = var.maximum_size
   min_size           = var.minimum_size
@@ -262,7 +259,7 @@ resource "aws_autoscaling_group" "AutoScalingWebserver" {
     create_before_destroy = true
   }
   tag {
-    key                 = "Name"
+    key                 = "Name-${var.env}"
     value               = "web"
     propagate_at_launch = true
   }
@@ -272,7 +269,7 @@ resource "aws_autoscaling_group" "AutoScalingWebserver" {
 
 #Creating Scaling policy for AutoScaling Groupc combined CPU usage of all the instances reaches or greater  10% 
 resource "aws_autoscaling_policy" "scalingpolicy10percent" {
-  name                   = "${local.name_prefix}-scalingpolicy10percent"
+  name                   = "${local.name_prefix}-scalingpolicy10percent-${var.env}"
   autoscaling_group_name = aws_autoscaling_group.AutoScalingWebserver.name
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = 1
@@ -284,7 +281,7 @@ resource "aws_autoscaling_policy" "scalingpolicy10percent" {
 resource "aws_cloudwatch_metric_alarm" "metricScalingPolicey5" {
   alarm_description   = "CPU usage of all the instances  less then  or equal 5% "
   alarm_actions       = [aws_autoscaling_policy.scalingpolicy5percent.arn]
-  alarm_name          = "${local.name_prefix}_scale_down"
+  alarm_name          = "${local.name_prefix}_scale_down-${var.env}"
   comparison_operator = "LessThanOrEqualToThreshold"
   namespace           = "AWS/EC2"
   metric_name         = "CPUUtilization"
@@ -301,7 +298,7 @@ resource "aws_cloudwatch_metric_alarm" "metricScalingPolicey5" {
 
 #Creating Scaling policy for AutoScaling Groupc combined CPU usage of all the instances  less then  or equal 5% 
 resource "aws_autoscaling_policy" "scalingpolicy5percent" {
-  name                   = "${local.name_prefix}-scalingpolicy5percent"
+  name                   = "${local.name_prefix}-scalingpolicy5percent-${var.env}"
   autoscaling_group_name = aws_autoscaling_group.AutoScalingWebserver.name
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = -1
@@ -313,7 +310,7 @@ resource "aws_autoscaling_policy" "scalingpolicy5percent" {
 resource "aws_cloudwatch_metric_alarm" "metricScalingPolicey10" {
   alarm_description   = " CPU usage of all the instances  reaches or greater  10%"
   alarm_actions       = [aws_autoscaling_policy.scalingpolicy5percent.arn]
-  alarm_name          = "${local.name_prefix}_scale_up"
+  alarm_name          = "${local.name_prefix}_scale_up-${var.env}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   namespace           = "AWS/EC2"
   metric_name         = "CPUUtilization"
