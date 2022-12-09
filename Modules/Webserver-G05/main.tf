@@ -65,7 +65,6 @@ resource "aws_security_group" "SG_Bastion" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    #cidr_blocks = ["${var.my_public_ip}/32", "${var.my_private_ip}/32"]
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
@@ -92,7 +91,7 @@ resource "aws_instance" "Bastion_Server" {
   key_name                    = aws_key_pair.linux_key.key_name
   subnet_id                   = data.terraform_remote_state.network.outputs.public_subnet_ids[0]
   security_groups             = [aws_security_group.SG_Bastion.id]
-  associate_public_ip_address = true  #3 Changed its value yto true after verfi.
+  associate_public_ip_address = true  #3 Changed its value to true after verfied.
 
   lifecycle {
     create_before_destroy = true
@@ -140,7 +139,7 @@ resource "aws_security_group" "SG_WebServer" {
     to_port          = 22
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
-    #security_groups  = [aws_security_group.SG_Bastion.id]  ## change need to revert 
+    security_groups  = [aws_security_group.SG_Bastion.id]  ## change need to revert 
     
     ipv6_cidr_blocks = ["::/0"]
   }
@@ -167,7 +166,6 @@ resource "aws_lb" "LoadBalancerApp" {
   name               = "LoadBalancerApp-${var.env}"
   internal           = false
   load_balancer_type = "application"
-  #security_groups    = [aws_security_group.SG_LoadBlancer.id]
   security_groups    = [aws_security_group.SG_WebServer.id]
   subnets            = data.terraform_remote_state.network.outputs.public_subnet_ids[*]
   enable_deletion_protection = false
@@ -220,8 +218,7 @@ resource "aws_launch_configuration" "launch_configuration" {
   name          = "${local.name_prefix}-launch_configuration"
   image_id      = "ami-0c02fb55956c7d316"
   instance_type = var.instance_type
-#security_groups    = [aws_security_group.SG_LoadBlancer.id]  
- security_groups    = [aws_security_group.SG_WebServer.id] ## Security Group Updated 
+ security_groups    = [aws_security_group.SG_WebServer.id]
   key_name      = aws_key_pair.linux_key.key_name
   associate_public_ip_address = true
   iam_instance_profile = "LabInstanceProfile"

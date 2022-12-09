@@ -26,16 +26,12 @@ variable "env" {
   description = "Deployment Environment"
 }
 
-
-
 #Maximum capacity for the Auto scaling group
 variable "desired_capacity" {
 
   type        = number
   description = "Maximum capacity for the Auto scaling group"
 }
-
-
 
 #Minimum group size for auto scaling
 variable "minimum_size" {
@@ -49,22 +45,6 @@ variable "maximum_size" {
   type        = number
   description = "Maximum group size for auto scaling"
 }
-
-
-#Private IP of Cloud 9 Environment these values need to hardcoded 
-variable "my_private_ip" {
-
-  type        = string
-  description = "Private IP of Cloud 9 Environment"
-}
-
-#Public IP of Cloud 9 Environment these values need to hardcoded 
-variable "my_public_ip" {
-
-  type        = string
-  description = "Public IP of Cloud 9 Environment"
-}
-
 
 variable "path_to_linux_key" {
 
