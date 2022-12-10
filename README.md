@@ -29,11 +29,11 @@ Command: cd ~/.ssh
 
 Command:
 
-ssh-keygen -t rsa Group-No-5-dev
+ssh-keygen -t rsa -f Group-No-5-dev
 
-ssh-keygen -t rsa Group-No-5-staging
+ssh-keygen -t rsa -f Group-No-5-staging
 
-ssh-keygen -t rsa Group-No-5-prod
+ssh-keygen -t rsa -f Group-No-5-prod
 
 Step3:
 
