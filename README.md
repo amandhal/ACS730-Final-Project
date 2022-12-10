@@ -56,6 +56,8 @@ akash.jpeg
 
 amish.jpg
 
+*** We have also attached images for you in the images folder.
+
 Note:
 
 If you are unable to create bucket succesfully if the name is already taken:
