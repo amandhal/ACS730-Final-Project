@@ -1,6 +1,4 @@
-# group5_acs730_project
-
-Final Project Group05: Two-Tier web application automation with Terraform
+# Two-Tier web application automation with Terraform
 ******************************
 Objective of the Project:
 *****************************
